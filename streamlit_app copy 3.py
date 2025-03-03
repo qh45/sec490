@@ -35,6 +35,11 @@ if json_input:
 
         st.success("JSON loaded successfully!")
 
+        # Always display Agent Host
+        st.subheader("Field Values")
+        st.markdown(f"**Agent Host:** ____")  # Placeholder for actual data
+        st.markdown(f"**Timestamp:** {format_timestamp(data.get('timestamp', 'N/A'))}")
+
         # Define fields with dynamic default selection based on values
         all_fields = {
             "Source IP": data.get('src_ip', 'N/A'),
@@ -59,18 +64,12 @@ if json_input:
             if value != 'N/A' and not (field == "Application Protocol" and value == "http")
         ]
 
-        # Display the field selection menu
-        st.subheader("Choose Additional Fields to Display")
+        # Checklist for other fields
         fields_to_display = st.multiselect(
-            "Select fields:",
+            "Choose additional fields to display:",
             list(all_fields.keys()),
             default=default_fields
         )
-
-        # Always display Agent Host and Timestamp after the field selection
-        st.subheader("Field Values")
-        st.markdown(f"**Agent Host:** ____")  # Placeholder for actual data
-        st.markdown(f"**Timestamp:** {format_timestamp(data.get('timestamp', 'N/A'))}")
 
         # Display selected fields without empty lines
         for field in fields_to_display:
