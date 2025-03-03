@@ -10,17 +10,6 @@ def format_timestamp(timestamp):
     except ValueError:
         return "Invalid Timestamp"
 
-# Function to convert bytes to KB or MB (no decimals)
-def convert_bytes(value):
-    try:
-        kb_value = value // 1024
-        if kb_value > 9999:  # Convert to MB if KB > 9999
-            return f"{kb_value // 1024} MB"
-        else:
-            return f"{kb_value} KB"
-    except (TypeError, ValueError):
-        return "N/A"
-
 # Streamlit app
 st.title("Interactive JSON Viewer")
 
@@ -46,23 +35,16 @@ if json_input:
             "Dest IP": data.get('dest_ip', 'N/A'),
             "Source Port": data.get('src_port', 'N/A'),
             "Dest Port": data.get('dest_port', 'N/A'),
-            "Bytes to Client": convert_bytes(data.get('flow', {}).get('bytes_toclient')),
-            "Bytes to Server": convert_bytes(data.get('flow', {}).get('bytes_toserver')),
+            "Bytes to Client": data.get('flow', {}).get('bytes_toclient', 'N/A'),
             "Hostname": data.get('http', {}).get('hostname', 'N/A'),
             "Signature": data.get('alert', {}).get('signature', 'N/A'),
             "Category": data.get('alert', {}).get('category', 'N/A'),
             "MITRE Technique Name": data.get('alert', {}).get('metadata', {}).get('mitre_technique_name', ['N/A'])[0],
-            "HTTP User Agent": data.get('http', {}).get('http_user_agent', 'N/A'),
-            "HTTP Refer": data.get('http', {}).get('http_refer', 'N/A'),
-            "URL": data.get('http', {}).get('url', 'N/A'),
-            "Application Protocol": data.get('app_proto', 'N/A')
+            "HTTP User Agent": data.get('http', {}).get('http_user_agent', 'N/A')
         }
 
-        # Automatically select only fields with values (not N/A), excluding app_proto if "http"
-        default_fields = [
-            field for field, value in all_fields.items()
-            if value != 'N/A' and not (field == "Application Protocol" and value == "http")
-        ]
+        # Automatically select only the fields with values (not N/A) as defaults
+        default_fields = [field for field, value in all_fields.items() if value != 'N/A']
 
         # Checklist for other fields
         fields_to_display = st.multiselect(
